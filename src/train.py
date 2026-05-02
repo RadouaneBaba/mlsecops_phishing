@@ -34,7 +34,6 @@ import dagshub
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config_loader import load_config
 
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 
@@ -80,6 +79,9 @@ def train(dataset_type: str, data_path: str, cfg: dict) -> bool:
     }
 
     # ── DagHub / MLflow setup ─────────────────────────────────────────────────
+
+    os.environ["DAGSHUB_USER_TOKEN"] = os.environ.get("DAGSHUB_TOKEN", "")
+
     dagshub.init(
         repo_owner=m_cfg["dagshub_username"],
         repo_name=m_cfg["dagshub_repo"],
