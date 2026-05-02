@@ -1,6 +1,6 @@
 # MLSecOps — Phishing Detection Pipeline
 
-Final-year project at ENSAO. A secure MLOps pipeline for detecting malicious PDF and HTML attachments using XGBoost, with DevSecOps controls at every stage.
+A secure MLOps pipeline for detecting malicious PDF and HTML attachments using XGBoost, with DevSecOps controls at every stage.
 
 ## Dataset
 

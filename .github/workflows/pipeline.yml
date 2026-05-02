@@ -26,3 +26,57 @@ jobs:
 
       - name: Validate HTML dataset
         run: python src/data_validation.py --dataset-type html
+
+
+  train-pdf:
+    runs-on: ubuntu-latest
+    needs: data-validation
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Train PDF model
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: python src/train.py --dataset-type pdf
+
+      - name: Upload PDF model
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-pdf
+          path: models/model_pdf.pkl
+
+
+  train-html:
+    runs-on: ubuntu-latest
+    needs: data-validation
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Train HTML model
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: python src/train.py --dataset-type html
+
+      - name: Upload HTML model
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-html
+          path: models/model_html.pkl
