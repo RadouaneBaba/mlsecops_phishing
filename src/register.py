@@ -15,16 +15,17 @@ Exit codes:
 
 import argparse
 import hashlib
+import os
 import sys
 from pathlib import Path
 
 import mlflow
 from mlflow import MlflowClient
 import dagshub
+from dagshub.auth import add_app_token
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config_loader import load_config
-
 
 # ── Hash ──────────────────────────────────────────────────────────────────────
 
@@ -63,6 +64,14 @@ def register(dataset_type: str, model_path: str, cfg: dict) -> bool:
     print(f"  Hash saved → {hash_path}")
 
     # ── Step 2: Connect to DagHub / MLflow ────────────────────────────────────
+    token = os.environ.get("DAGSHUB_TOKEN")
+    if not token:
+        raise RuntimeError(
+            "DAGSHUB_TOKEN is not set. "
+            "Add it to your repository secrets and expose it in the workflow env."
+        )
+
+    add_app_token(token)
     dagshub.init(
         repo_owner=m_cfg["dagshub_username"],
         repo_name=m_cfg["dagshub_repo"],

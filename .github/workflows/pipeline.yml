@@ -49,7 +49,7 @@ jobs:
         run: python src/train.py --dataset-type pdf
 
       - name: Upload PDF model
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: model-pdf
           path: models/model_pdf.pkl
@@ -76,7 +76,119 @@ jobs:
         run: python src/train.py --dataset-type html
 
       - name: Upload HTML model
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: model-html
           path: models/model_html.pkl
+
+
+  evaluate-pdf:
+    runs-on: ubuntu-latest
+    needs: train-pdf
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download PDF model
+        uses: actions/download-artifact@v8
+        with:
+          name: model-pdf
+          path: models/
+
+      - name: Evaluate PDF model
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: python src/evaluate.py --dataset-type pdf
+
+      - name: Upload PDF evaluation report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: eval-report-pdf
+          path: reports/eval_pdf.json
+
+
+  evaluate-html:
+    runs-on: ubuntu-latest
+    needs: train-html
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download HTML model
+        uses: actions/download-artifact@v8
+        with:
+          name: model-html
+          path: models/
+
+      - name: Evaluate HTML model
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: python src/evaluate.py --dataset-type html
+
+      - name: Upload HTML evaluation report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: eval-report-html
+          path: reports/eval_html.json
+
+
+  register:
+    runs-on: ubuntu-latest
+    needs: [evaluate-pdf, evaluate-html]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download PDF model
+        uses: actions/download-artifact@v8
+        with:
+          name: model-pdf
+          path: models/
+
+      - name: Download HTML model
+        uses: actions/download-artifact@v8
+        with:
+          name: model-html
+          path: models/
+
+      - name: Register PDF model
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: python src/register.py --dataset-type pdf
+
+      - name: Register HTML model
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: python src/register.py --dataset-type html
+
+      - name: Upload hashes
+        uses: actions/upload-artifact@v7
+        with:
+          name: model-hashes
+          path: hashes/
