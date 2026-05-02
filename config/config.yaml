@@ -1,0 +1,54 @@
+# ─────────────────────────────────────────────────────────────
+#  MLSecOps Pipeline — Central Configuration
+#  All scripts read from this file. No hardcoded values allowed.
+# ─────────────────────────────────────────────────────────────
+
+# ── Data ──────────────────────────────────────────────────────
+data:
+  html: data/HTML_Top13_Features.csv
+  pdf:  data/PDF_Top10_features.csv
+
+# ── Model output paths ────────────────────────────────────────
+model:
+  output_dir: models/
+  html: models/model_html.pkl
+  pdf:  models/model_pdf.pkl
+
+# ── Hash output paths ─────────────────────────────────────────
+hashes:
+  output_dir: hashes/
+  html: hashes/model_html.sha256
+  pdf:  hashes/model_pdf.sha256
+
+# ── Evaluation report output paths ───────────────────────────
+reports:
+  output_dir: reports/
+  html: reports/eval_html.json
+  pdf:  reports/eval_pdf.json
+
+# ── Training hyperparameters ──────────────────────────────────
+training:
+  n_estimators: 200
+  eval_metric:  logloss
+  test_size:    0.2
+  random_state: 42
+
+# ── Evaluation thresholds (gate: fail CI if below) ────────────
+thresholds:
+  f1_malicious:  0.80      # F1 for class 1 (malicious) — critical class
+  f1_benign:     0.80      # F1 for class 0 (benign)
+  f1_weighted:   0.80      # overall weighted F1
+  accuracy:      0.80
+
+# ── MLflow / DagHub ──────────────────────────────────────────
+mlflow:
+  # DagHub repo info — set DAGSHUB_TOKEN as a GitHub Actions secret
+  dagshub_username: RadouaneBaba
+  dagshub_repo:     mlsecops_phishing        
+  experiment_prefix: phishing                # experiments: phishing-html, phishing-pdf
+
+# ── MLflow Model Registry ─────────────────────────────────────
+registry:
+  model_name_html: phishing-detector-html
+  model_name_pdf:  phishing-detector-pdf
+  stage:           Staging                   # Staging | Production

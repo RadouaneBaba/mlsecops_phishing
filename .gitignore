@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Models (large files — stored in MLflow/DagHub, not Git)
+models/
+hashes/
+reports/
+
+# Data (large files — store separately)
+# data/
+
+# MLflow local runs (if any)
+mlruns/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db

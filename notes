@@ -1,0 +1,1 @@
+is weighted the best option here: test_f1 = f1_score(y_test, y_pred, average="weighted") (train.py)
